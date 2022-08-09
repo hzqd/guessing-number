@@ -26,6 +26,16 @@ macro_rules! match_op {
     };
 }
 
+macro_rules! n {
+    ($new:expr) => {
+        match read_line().trim_end() {
+            "n" => $new,
+            "q" => process::exit(0),
+            _ => panic!("Wrong input, game exit."),
+        }
+    };
+}
+
 fn main() {
     'start: loop {
         print!("###########################################################\n");
@@ -36,32 +46,27 @@ fn main() {
         print!("##  I can only answer yes or no!                         ##\n");
         print!("###########################################################\n");
 
-        let secret_number = thread_rng().gen_range(1u8..=100);
+        let secret_number = thread_rng().gen_range(1..=100);
         let mut ask_times = 1;
 
         loop {
             println!("Please input your guess:");
             let input = read_line().trim_end().chars().collect_vec();
+            let succ = || {
+                print!("#####################################\n");
+                print!("##   Bingo!   You guessed right!   ##\n");
+                print!("#####################################\n");
+                print!("You asked {ask_times} times in total!\n");
+                println!("Input n to start a new game and q to exit the game!");
+            };
 
             match_op! {
                 input   secret_number   ask_times,
 
                 ['<', '=', ..], 2, >=;  ['<', ..], 1, >;
                 ['>', '=', ..], 2, <=;  ['>', ..], 1, <;
-                ['=', '=', ..], 2, ==;
-                
-                _num, 0, == {
-                    print!("#####################################\n");
-                    print!("##   Bingo!   You guessed right!   ##\n");
-                    print!("#####################################\n");
-                    print!("You asked {ask_times} times in total!\n");
-                    println!("Input n to start a new game and q to exit the game!");
-                    match read_line().trim_end() {
-                        "n" => continue 'start,
-                        "q" => process::exit(0),
-                        _ => panic!("Wrong input, game exit."),
-                    }
-                };
+                ['=', '=', ..], 2, == { succ(); n!(continue 'start); };
+                _pure_number,   0, == { succ(); n!(continue 'start); };
             }
             
             ask_times += 1;
