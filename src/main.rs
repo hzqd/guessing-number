@@ -38,13 +38,14 @@ macro_rules! n {
 
 fn main() {
     'start: loop {
-        print!("###########################################################\n");
-        print!("##  Welcome to the Guessing Number Game!                 ##\n");
-        print!("##  Each game produces a random number from 1 to 100.    ##\n");
-        print!("##  You can only use >,>=,==,<,<= symbols and numbers    ##\n");
-        print!("##  to ask me questions. Like >50, <=38, ==47 etc.       ##\n");
-        print!("##  I can only answer yes or no!                         ##\n");
-        print!("###########################################################\n");
+        print!("########################################################\n");
+        print!("##  Welcome to the Guessing Number Game!              ##\n");
+        print!("##  Each game produces a random number from 1 to 100. ##\n");
+        print!("##  You can only use >,>=,=,<,<= symbols and numbers  ##\n");
+        print!("##  or pure numbers to ask me questions.              ##\n");
+        print!("##  Like >=50, <=38, >47, <63, =52, 58 etc.           ##\n");
+        print!("##  I can only answer you yes or no.                  ##\n");
+        print!("########################################################\n");
 
         let secret_number = thread_rng().gen_range(1..=100);
         let mut ask_times = 1;
@@ -57,7 +58,7 @@ fn main() {
                 print!("##   Bingo!   You guessed right!   ##\n");
                 print!("#####################################\n");
                 print!("You asked {ask_times} times in total!\n");
-                println!("Input n to start a new game and q to exit the game!");
+                println!("Input n to start a new game or q to exit the game!");
             };
 
             match_op! {
@@ -65,8 +66,8 @@ fn main() {
 
                 ['<', '=', ..], 2, >=;  ['<', ..], 1, >;
                 ['>', '=', ..], 2, <=;  ['>', ..], 1, <;
-                ['=', '=', ..], 2, == { succ(); n!(continue 'start); };
-                _pure_number,   0, == { succ(); n!(continue 'start); };
+                ['=', ..], 1, == { succ(); n!(continue 'start); };
+                _pure_num, 0, == { succ(); n!(continue 'start); };
             }
             
             ask_times += 1;
