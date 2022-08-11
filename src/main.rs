@@ -27,9 +27,9 @@ macro_rules! match_op {
 }
 
 macro_rules! n {
-    ($new:expr) => {
+    ($new:tt) => {
         match read_line().trim_end() {
-            "n" => $new,
+            "n" => continue $new,
             "q" => process::exit(0),
             _ => panic!("Wrong input, game exit."),
         }
@@ -66,8 +66,8 @@ fn main() {
 
                 ['<', '=', ..], 2, >=;  ['<', ..], 1, >;
                 ['>', '=', ..], 2, <=;  ['>', ..], 1, <;
-                ['=', ..], 1, == { succ(); n!(continue 'start); };
-                _pure_num, 0, == { succ(); n!(continue 'start); };
+                ['=', ..], 1, == { succ(); n!('start); };
+                _pure_num, 0, == { succ(); n!('start); };
             }
             
             ask_times += 1;
